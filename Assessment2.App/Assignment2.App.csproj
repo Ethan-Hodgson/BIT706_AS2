@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\add-animal.png" />
+    <None Remove="Images\add-customer.png" />
+    <None Remove="Images\clinic-logo.png" />
+    <None Remove="Images\edit-animal.png" />
+    <None Remove="Images\edit-customer.png" />
+    <None Remove="Images\exit-application.png" />
+    <None Remove="Images\search.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\add-animal.png" />
+    <Resource Include="Images\add-customer.png" />
+    <Resource Include="Images\clinic-logo.png" />
+    <Resource Include="Images\edit-animal.png" />
+    <Resource Include="Images\edit-customer.png" />
+    <Resource Include="Images\exit-application.png" />
+    <Resource Include="Images\search.png" />
+  </ItemGroup>
+
+</Project>

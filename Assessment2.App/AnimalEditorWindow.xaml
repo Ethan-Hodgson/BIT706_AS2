@@ -1,0 +1,69 @@
+﻿<Window x:Class="Assignment2.App.AnimalEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="We-Treat-It: Add Animal" Height="250" Width="400" ResizeMode="NoResize">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.Resources>
+            <Style TargetType="ComboBox">
+                <Setter Property="Width" Value="250" />
+                <Setter Property="Margin" Value="4" />
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="Margin" Value="4" />
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="Width" Value="250" />
+                <Setter Property="Margin" Value="4" />
+            </Style>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Type:" />
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Sex:" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Breed:" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Owner:" />
+
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="animalName" />
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="type" />
+        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="sex">
+            <ComboBoxItem Content="Unknown" />
+            <ComboBoxItem Content="Female" />
+            <ComboBoxItem Content="Male" />
+        </ComboBox>
+        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Name="breed" />
+        <TextBox Grid.Row="4" Grid.Column="1" Name="owner" Width="220" IsReadOnly="True" />
+        <Button Grid.Row="4" Grid.Column="2" Height="20" Width="20" Margin="2,4" Click="OnFindCustomer">
+            <Button.Content>
+                <Image Source="Images/search.png" Height="16" Width="16" />
+            </Button.Content>
+        </Button>
+
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Width" Value="50" />
+                    <Setter Property="Margin" Value="4" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Cancel" IsCancel="True" Click="OnCancel" />
+            <Button Content="Save" Click="OnSave" />
+        </StackPanel>
+    </Grid>
+</Window>
