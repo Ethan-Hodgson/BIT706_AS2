@@ -8,13 +8,13 @@ namespace Assignment2.App
     /// </summary>
     public partial class CustomerEditorWindow : Window
     {
-        private readonly Store dataStore;
+        private readonly VetClinicService vetClinicService;
         private Customer? customer;
 
-        public CustomerEditorWindow(Store dataStore)
+        public CustomerEditorWindow(VetClinicService vetClinicService)
         {
             InitializeComponent();
-            this.dataStore = dataStore;
+            this.vetClinicService = vetClinicService;
         }
 
         public Customer? Customer
@@ -28,28 +28,6 @@ namespace Assignment2.App
                 phoneNumber.Text = customer?.PhoneNumber ?? string.Empty;
                 address.Text = customer?.Address ?? string.Empty;
             }
-        }
-
-        private bool AddNewCustomer()
-        {
-            var customer = dataStore.AddCustomer();
-            customer.FirstName = firstName.Text;
-            customer.Surname = surname.Text;
-            customer.PhoneNumber = phoneNumber.Text;
-            customer.Address = address.Text;
-            if (!customer.CheckIfValid())
-            {
-                MessageBox.Show(
-                    "Cannot save customer - some information is missing",
-                    "Save error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return false;
-            }
-
-            dataStore.Customers.Add(customer);
-            dataStore.Save("data");
-            return true;
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
@@ -69,23 +47,46 @@ namespace Assignment2.App
             }
         }
 
+        private bool AddNewCustomer()
+        {
+            var newCustomer = new Customer
+            {
+                FirstName = firstName.Text,
+                Surname = surname.Text,
+                PhoneNumber = phoneNumber.Text,
+                Address = address.Text
+            };
+
+            if (!newCustomer.CheckIfValid())
+            {
+                MessageBox.Show("Cannot save customer - some information is missing",
+                                "Save error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                return false;
+            }
+
+            vetClinicService.CreateCustomer(newCustomer);
+            return true;
+        }
+
         private bool UpdateCustomer()
         {
             Customer!.FirstName = firstName.Text;
             Customer.Surname = surname.Text;
             Customer.PhoneNumber = phoneNumber.Text;
             Customer.Address = address.Text;
+
             if (!Customer.CheckIfValid())
             {
-                MessageBox.Show(
-                    "Cannot save customer - some information is missing",
-                    "Save error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("Cannot save customer - some information is missing",
+                                "Save error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                 return false;
             }
 
-            dataStore.Save("data");
+            vetClinicService.UpdateCustomer(Customer);
             return true;
         }
     }

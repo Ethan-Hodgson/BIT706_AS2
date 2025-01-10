@@ -1,6 +1,7 @@
 ﻿using Assignment2.App.BusinessLayer;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace Assignment2.App
 {
@@ -9,13 +10,13 @@ namespace Assignment2.App
     /// </summary>
     public partial class SearchForAnimalWindow : Window
     {
-        private readonly Store dataStore;
+        private readonly VetClinicService vetClinicService;
         private Customer? customer;
 
-        public SearchForAnimalWindow(Store dataStore)
+        public SearchForAnimalWindow(VetClinicService vetClinicService)
         {
             InitializeComponent();
-            this.dataStore = dataStore;
+            this.vetClinicService = vetClinicService;
         }
 
         public Animal? Animal { get; private set; }
@@ -26,10 +27,17 @@ namespace Assignment2.App
             set
             {
                 customer = value;
-                var animals = dataStore.FindAnimals(customer?.Id ?? 0);
-                foreach (var animal in animals)
+                searchResults.Items.Clear();
+
+                if (customer != null)
                 {
-                    searchResults.Items.Add(new ListBoxItem { Content = animal });
+                    // Use vetClinicService.GetAnimalsByOwner(...)
+                    var animals = vetClinicService.GetAnimalsByOwner(customer.Id);
+
+                    foreach (var animal in animals)
+                    {
+                        searchResults.Items.Add(new ListBoxItem { Content = animal });
+                    }
                 }
             }
         }

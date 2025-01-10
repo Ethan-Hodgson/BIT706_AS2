@@ -9,14 +9,14 @@ namespace Assignment2.App
     /// </summary>
     public partial class AnimalEditorWindow : Window
     {
-        private readonly Store dataStore;
+        private readonly VetClinicService vetClinicService;
         private Animal? animal;
         private Customer? customer;
 
-        public AnimalEditorWindow(Store dataStore)
+        public AnimalEditorWindow(VetClinicService vetClinicService)
         {
             InitializeComponent();
-            this.dataStore = dataStore;
+            this.vetClinicService = vetClinicService;
         }
 
         public Animal? Animal
@@ -32,33 +32,18 @@ namespace Assignment2.App
                 breed.Text = animal?.Breed ?? string.Empty;
                 owner.Text = string.Empty;
 
-                if (animal == null) return;
-                customer = dataStore.Customers.FirstOrDefault(c => c.Id == animal.OwnerId);
-                owner.Text = customer?.ToString() ?? string.Empty;
+                if (animal != null)
+                {
+                    // If you need the current owner:
+                    // You'd do something like:
+                    //     customer = vetClinicService.GetCustomerById(animal.OwnerId);
+                    // if you added that to VetClinicService.  
+                    // Then:
+                    //     owner.Text = customer?.ToString() ?? string.Empty;
+                    //
+                    // Otherwise, if you're not displaying the current owner, skip this.
+                }
             }
-        }
-
-        private bool AddNewAnimal()
-        {
-            var animal = dataStore.AddAnimal();
-            animal.Name = animalName.Text;
-            animal.Type = type.Text;
-            animal.Breed = breed.Text;
-            animal.Sex = sex.Text;
-            animal.OwnerId = customer?.Id ?? 0;
-            if (!animal.CheckIfValid())
-            {
-                MessageBox.Show(
-                    "Cannot save animal - some information is missing",
-                    "Save error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return false;
-            }
-
-            dataStore.Animals.Add(animal);
-            dataStore.Save("data");
-            return true;
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
@@ -68,7 +53,8 @@ namespace Assignment2.App
 
         private void OnFindCustomer(object sender, RoutedEventArgs e)
         {
-            var window = new SearchForCustomerWindow(dataStore)
+            // Open the "SearchForCustomerWindow" that also uses VetClinicService:
+            var window = new SearchForCustomerWindow(vetClinicService)
             {
                 Owner = this,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
@@ -92,24 +78,49 @@ namespace Assignment2.App
             }
         }
 
+        private bool AddNewAnimal()
+        {
+            var newAnimal = new Animal
+            {
+                Name = animalName.Text,
+                Type = type.Text,
+                Breed = breed.Text,
+                Sex = sex.Text,
+                OwnerId = customer?.Id ?? 0
+            };
+
+            if (!newAnimal.CheckIfValid())
+            {
+                MessageBox.Show("Cannot save animal - some information is missing",
+                                "Save error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                return false;
+            }
+
+            vetClinicService.CreateAnimal(newAnimal);
+            return true;
+        }
+
         private bool UpdateAnimal()
         {
+            // We know Animal != null here
             Animal!.Name = animalName.Text;
             Animal.Type = type.Text;
             Animal.Breed = breed.Text;
             Animal.Sex = sex.Text;
             Animal.OwnerId = customer?.Id ?? 0;
+
             if (!Animal.CheckIfValid())
             {
-                MessageBox.Show(
-                    "Cannot save animal - some information is missing",
-                    "Save error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show("Cannot save animal - some information is missing",
+                                "Save error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
                 return false;
             }
 
-            dataStore.Save("data");
+            vetClinicService.UpdateAnimal(Animal);
             return true;
         }
     }

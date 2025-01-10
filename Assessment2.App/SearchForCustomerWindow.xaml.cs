@@ -10,12 +10,12 @@ namespace Assignment2.App
     /// </summary>
     public partial class SearchForCustomerWindow : Window
     {
-        private readonly Store dataStore;
+        private readonly VetClinicService vetClinicService;
 
-        public SearchForCustomerWindow(Store dataStore)
+        public SearchForCustomerWindow(VetClinicService vetClinicService)
         {
             InitializeComponent();
-            this.dataStore = dataStore;
+            this.vetClinicService = vetClinicService;
         }
 
         public Customer? Customer { get; set; }
@@ -31,8 +31,13 @@ namespace Assignment2.App
             searchResults.Items.Clear();
             var searchText = searchName.Text;
             if (searchText.Length < 3) return;
-            var customers = dataStore.FindCustomers(searchText);
-            foreach (var customer in customers.OrderBy(c => c.Surname).ThenBy(c => c.FirstName))
+
+            // Instead of dataStore.FindCustomers, call:
+            var customers = vetClinicService.FindCustomers(searchText);
+
+            foreach (var customer in customers
+                .OrderBy(c => c.Surname)
+                .ThenBy(c => c.FirstName))
             {
                 searchResults.Items.Add(new ListBoxItem { Content = customer });
             }
