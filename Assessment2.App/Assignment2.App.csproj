@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
     <None Remove="Images\add-animal.png" />
     <None Remove="Images\add-customer.png" />
     <None Remove="Images\clinic-logo.png" />
@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\add-animal.png" />
     <Resource Include="Images\add-customer.png" />
     <Resource Include="Images\clinic-logo.png" />
@@ -25,6 +29,15 @@
     <Resource Include="Images\edit-customer.png" />
     <Resource Include="Images\exit-application.png" />
     <Resource Include="Images\search.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\AddCustomerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EditCustomerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
 </Project>

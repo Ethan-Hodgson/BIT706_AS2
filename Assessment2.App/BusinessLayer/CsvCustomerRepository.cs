@@ -10,33 +10,32 @@ namespace Assignment2.App.BusinessLayer
     public class CsvCustomerRepository : ICustomerRepository
     {
         private readonly string customersFilePath;
-
-        private List<Customer> customers = new List<Customer>();
+        private List<Customer> customers = new();
         private int lastCustomerId = 0;
 
         public CsvCustomerRepository(string customersFilePath)
         {
             this.customersFilePath = customersFilePath;
+
+            // Ensure directory exists
+            var directory = Path.GetDirectoryName(customersFilePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             LoadAll();
         }
 
-        public IEnumerable<Customer> GetAll()
-        {
-            return customers;
-        }
+        public IEnumerable<Customer> GetAll() => customers;
 
-        public IEnumerable<Customer> FindByName(string name)
-        {
-            // Example: case-insensitive substring match
-            return customers.Where(c =>
-                (c.FirstName != null && c.FirstName.Contains(name, StringComparison.OrdinalIgnoreCase)) ||
-                (c.Surname != null && c.Surname.Contains(name, StringComparison.OrdinalIgnoreCase)));
-        }
+        public IEnumerable<Customer> FindByName(string name) =>
+            customers.Where(c =>
+                (c.FirstName?.Contains(name, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (c.Surname?.Contains(name, StringComparison.OrdinalIgnoreCase) ?? false));
 
-        public Customer? GetById(int customerId)
-        {
-            return customers.FirstOrDefault(c => c.Id == customerId);
-        }
+        public Customer? GetById(int customerId) =>
+            customers.FirstOrDefault(c => c.Id == customerId);
 
         public void Add(Customer customer)
         {
@@ -48,8 +47,7 @@ namespace Assignment2.App.BusinessLayer
         public void Update(Customer updatedCustomer)
         {
             var existing = GetById(updatedCustomer.Id);
-            if (existing == null)
-                return; // or throw
+            if (existing == null) return;
 
             existing.FirstName = updatedCustomer.FirstName;
             existing.Surname = updatedCustomer.Surname;
@@ -69,29 +67,17 @@ namespace Assignment2.App.BusinessLayer
             }
         }
 
-        // --------------------------
-        // Private Helpers
-        // --------------------------
         private void LoadAll()
         {
             customers.Clear();
-            if (!File.Exists(customersFilePath))
-            {
-                lastCustomerId = 0;
-                return;
-            }
+            if (!File.Exists(customersFilePath)) return;
 
-            using var stream = File.OpenRead(customersFilePath);
-            using var reader = new StreamReader(stream);
-            // first line is header
-            var headerLine = reader.ReadLine();
-
-            var line = reader.ReadLine();
-            while (!string.IsNullOrEmpty(line))
+            using var reader = new StreamReader(customersFilePath);
+            reader.ReadLine(); // Skip header
+            string? line;
+            while ((line = reader.ReadLine()) != null)
             {
-                var cust = Customer.FromCsv(line);
-                customers.Add(cust);
-                line = reader.ReadLine();
+                customers.Add(Customer.FromCsv(line));
             }
 
             lastCustomerId = customers.Any() ? customers.Max(c => c.Id) : 0;
@@ -99,13 +85,11 @@ namespace Assignment2.App.BusinessLayer
 
         private void SaveAll()
         {
-            using var stream = File.Create(customersFilePath);
-            using var writer = new StreamWriter(stream);
+            using var writer = new StreamWriter(customersFilePath);
             Customer.WriteHeaderToCsv(writer);
-
-            foreach (var cust in customers)
+            foreach (var customer in customers)
             {
-                cust.WriteToCsv(writer);
+                customer.WriteToCsv(writer);
             }
         }
     }

@@ -12,17 +12,13 @@ namespace Assignment2.App.BusinessLayer
             IAnimalRepository animalRepository,
             ICustomerRepository customerRepository)
         {
-            this.animalRepo = animalRepository;
-            this.customerRepo = customerRepository;
+            animalRepo = animalRepository;
+            customerRepo = customerRepository;
         }
 
-        // -----------------------
-        // ANIMAL-RELATED METHODS
-        // -----------------------
-
+        // ANIMAL METHODS
         public Animal CreateAnimal(Animal animal)
         {
-            // If needed, do validation: if (!animal.CheckIfValid()) throw ...
             animalRepo.Add(animal);
             return animal;
         }
@@ -39,20 +35,12 @@ namespace Assignment2.App.BusinessLayer
 
         public IEnumerable<Animal> GetAnimalsByOwner(int ownerId)
         {
-            // If you want "all animals" when ownerId=0, you can do:
-            // if (ownerId == 0) return animalRepo.GetAll();
-            // else return animalRepo.FindByOwner(ownerId);
-
-            return animalRepo.FindByOwner(ownerId);
+            return ownerId == 0 ? animalRepo.GetAll() : animalRepo.FindByOwner(ownerId);
         }
 
-        // -------------------------
-        // CUSTOMER-RELATED METHODS
-        // -------------------------
-
+        // CUSTOMER METHODS
         public Customer CreateCustomer(Customer customer)
         {
-            // if (!customer.CheckIfValid()) throw ...
             customerRepo.Add(customer);
             return customer;
         }
@@ -69,8 +57,12 @@ namespace Assignment2.App.BusinessLayer
 
         public IEnumerable<Customer> FindCustomers(string name)
         {
-            // name could be partial or case-insensitive
             return customerRepo.FindByName(name);
+        }
+
+        public Customer? GetCustomerById(int customerId)
+        {
+            return customerRepo.GetById(customerId);
         }
     }
 }
