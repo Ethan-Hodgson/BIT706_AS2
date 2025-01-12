@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Assignment2.App.Repositories;
 
 namespace Assignment2.App.BusinessLayer
@@ -35,8 +37,17 @@ namespace Assignment2.App.BusinessLayer
 
         public IEnumerable<Animal> GetAnimalsByOwner(int ownerId)
         {
-            return ownerId == 0 ? animalRepo.GetAll() : animalRepo.FindByOwner(ownerId);
+            var results = ownerId == 0 ? animalRepo.GetAll() : animalRepo.FindByOwner(ownerId);
+            Console.WriteLine($"GetAnimalsByOwner: OwnerId={ownerId}, Count={results.Count()}");
+
+            foreach (var animal in results)
+            {
+                Console.WriteLine($"Animal Found: {animal.Name}, Type={animal.Type}, OwnerId={animal.OwnerId}");
+            }
+
+            return results;
         }
+
 
         // CUSTOMER METHODS
         public Customer CreateCustomer(Customer customer)
@@ -63,6 +74,11 @@ namespace Assignment2.App.BusinessLayer
         public Customer? GetCustomerById(int customerId)
         {
             return customerRepo.GetById(customerId);
+        }
+
+        public IEnumerable<Customer> GetAllCustomers()
+        {
+            return customerRepo.GetAll();
         }
     }
 }

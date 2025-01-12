@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Assignment2.App.BusinessLayer;
@@ -10,51 +11,35 @@ namespace Assignment2.App.BusinessLayer
     public class CsvAnimalRepository : IAnimalRepository
     {
         private readonly string animalsFilePath;
-
-        // We'll keep an in-memory list of animals, loaded from CSV
-        private List<Animal> animals = new List<Animal>();
+        private readonly List<Animal> animals = new();
         private int lastAnimalId = 0;
 
         public CsvAnimalRepository(string animalsFilePath)
         {
             this.animalsFilePath = animalsFilePath;
-            LoadAll();  // Load from CSV on construction
+            LoadAll();
         }
 
-        public IEnumerable<Animal> GetAll()
-        {
-            // Return a copy or read-only reference
-            return animals;
-        }
+        public IEnumerable<Animal> GetAll() => animals;
 
-        public IEnumerable<Animal> FindByOwner(int ownerId)
-        {
-            // Return animals matching the given ownerId
-            return animals.Where(a => a.OwnerId == ownerId);
-        }
+        public IEnumerable<Animal> FindByOwner(int ownerId) =>
+            animals.Where(a => a.OwnerId == ownerId);
 
-        public Animal? GetById(int animalId)
-        {
-            return animals.FirstOrDefault(a => a.Id == animalId);
-        }
+        public Animal? GetById(int animalId) =>
+            animals.FirstOrDefault(a => a.Id == animalId);
 
         public void Add(Animal animal)
         {
-            // Assign an ID by incrementing
             animal.Id = ++lastAnimalId;
-
             animals.Add(animal);
             SaveAll();
         }
 
         public void Update(Animal updatedAnimal)
         {
-            // Find the existing one
             var existing = GetById(updatedAnimal.Id);
-            if (existing == null)
-                return; // or throw an exception
+            if (existing == null) return;
 
-            // Update fields
             existing.Name = updatedAnimal.Name;
             existing.Type = updatedAnimal.Type;
             existing.Breed = updatedAnimal.Breed;
@@ -71,48 +56,39 @@ namespace Assignment2.App.BusinessLayer
             {
                 animals.Remove(existing);
                 SaveAll();
+                Debug.WriteLine($"Deleted animal with ID: {animalId}");
             }
         }
-
-        // ------------------------------------------
-        // Private helpers to load/save the CSV file
-        // ------------------------------------------
 
         private void LoadAll()
         {
             animals.Clear();
             if (!File.Exists(animalsFilePath))
             {
-                // If file doesn't exist, no animals to load
-                lastAnimalId = 0;
+                Debug.WriteLine("Animal file does not exist. No animals loaded.");
                 return;
             }
 
-            using var stream = File.OpenRead(animalsFilePath);
-            using var reader = new StreamReader(stream);
-            // First line is header - read & discard
-            var headerLine = reader.ReadLine();
+            using var reader = new StreamReader(animalsFilePath);
+            reader.ReadLine(); // Skip header
 
-            var line = reader.ReadLine();
-            while (!string.IsNullOrEmpty(line))
+            string? line;
+            while ((line = reader.ReadLine()) != null)
             {
                 var animal = Animal.FromCsv(line);
                 animals.Add(animal);
-                line = reader.ReadLine();
+                Debug.WriteLine($"Loaded Animal: {animal.Name}, Type={animal.Type}, OwnerId={animal.OwnerId}");
             }
 
-            // Set our lastAnimalId to the max found in file
             lastAnimalId = animals.Any() ? animals.Max(a => a.Id) : 0;
+            Debug.WriteLine($"Total animals loaded: {animals.Count}");
         }
+
 
         private void SaveAll()
         {
-            using var stream = File.Create(animalsFilePath);
-            using var writer = new StreamWriter(stream);
-            // Write header
+            using var writer = new StreamWriter(animalsFilePath);
             Animal.WriteHeaderToCsv(writer);
-
-            // Write each animal line
             foreach (var animal in animals)
             {
                 animal.WriteToCsv(writer);

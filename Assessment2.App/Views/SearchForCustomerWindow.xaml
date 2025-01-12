@@ -1,0 +1,28 @@
+﻿<Window x:Class="Assignment2.App.Views.SearchForCustomerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Customer Search" Height="300" Width="350">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Search Input -->
+        <TextBox Grid.Row="0" Width="300" Margin="5"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+        <!-- Search Results -->
+        <ListBox Grid.Row="1" Margin="5" 
+                 ItemsSource="{Binding Customers}" 
+                 DisplayMemberPath="FullName" 
+                 SelectedItem="{Binding SelectedCustomer}" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="5,0" />
+            <Button Content="Select" Command="{Binding SelectCommand}" IsEnabled="{Binding SelectedCustomer}" />
+        </StackPanel>
+    </Grid>
+</Window>

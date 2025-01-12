@@ -15,6 +15,8 @@ namespace Assignment2.App.BusinessLayer
 
         public string? Surname { get; set; }
 
+        public string FullName => $"{FirstName} {Surname}".Trim();
+
         public static Customer FromCsv(string line)
         {
             var parts = line.Split(',');

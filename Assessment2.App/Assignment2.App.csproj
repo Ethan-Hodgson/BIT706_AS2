@@ -32,7 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\AddAnimalWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\AddCustomerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EditAnimalWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\EditCustomerWindow.xaml">

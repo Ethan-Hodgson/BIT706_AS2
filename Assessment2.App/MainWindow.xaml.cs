@@ -1,12 +1,11 @@
 ﻿using Assignment2.App.BusinessLayer;
 using Assignment2.App.ViewModels;
 using Assignment2.App.Views;
-using Assignment2.App;
+using System;
 using System.Windows;
 
 namespace Assignment2.App
 {
-
     public partial class MainWindow : Window
     {
         private readonly VetClinicService clinicService;
@@ -32,24 +31,63 @@ namespace Assignment2.App
 
         private void OnEditCustomer(object sender, RoutedEventArgs e)
         {
-            var customerSearch = new SearchForCustomerWindow(clinicService)
+            var customerSearchVm = new SearchForCustomerViewModel(clinicService);
+            var customerSearchWindow = new SearchForCustomerWindow(customerSearchVm)
             {
                 Owner = this,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            if (customerSearch.ShowDialog() == true)
+            if (customerSearchWindow.ShowDialog() == true && customerSearchVm.SelectedCustomer != null)
             {
-                var selectedCustomer = customerSearch.Customer;
-                if (selectedCustomer != null)
+                var selectedCustomer = customerSearchVm.SelectedCustomer;
+                var editVm = new EditCustomerViewModel(clinicService, selectedCustomer.Id);
+                var editWindow = new EditCustomerWindow(editVm)
                 {
-                    var editVm = new EditCustomerViewModel(clinicService, selectedCustomer.Id);
-                    var editWindow = new EditCustomerWindow(editVm) // Ensure this matches the constructor
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                editWindow.ShowDialog();
+            }
+        }
+
+
+        private void OnAddAnimal(object sender, RoutedEventArgs e)
+        {
+            var addAnimalVm = new AddAnimalViewModel(clinicService, this);
+            var addAnimalWindow = new AddAnimalWindow(addAnimalVm)
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+            addAnimalWindow.ShowDialog();
+        }
+
+        private void OnEditAnimal(object sender, RoutedEventArgs e)
+        {
+            var animalSearchVm = new SearchForAnimalViewModel(clinicService);
+            var animalSearchWindow = new SearchForAnimalWindow(animalSearchVm)
+            {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            // Assuming OwnerId is provided dynamically; replace 0 with the actual ownerId
+            animalSearchWindow.LoadAnimals(0);
+
+            if (animalSearchWindow.ShowDialog() == true)
+            {
+                var selectedAnimal = animalSearchVm.SelectedAnimal;
+                if (selectedAnimal != null)
+                {
+                    Console.WriteLine($"Editing Animal: {selectedAnimal.Name}");
+                    var editAnimalVm = new EditAnimalViewModel(clinicService, selectedAnimal);
+                    var editAnimalWindow = new EditAnimalWindow(editAnimalVm)
                     {
                         Owner = this,
                         WindowStartupLocation = WindowStartupLocation.CenterOwner
                     };
-                    editWindow.ShowDialog();
+                    editAnimalWindow.ShowDialog();
                 }
             }
         }
@@ -58,20 +96,10 @@ namespace Assignment2.App
 
 
 
-        private void OnAddAnimal(object sender, RoutedEventArgs e)
-        {
-            // Logic for adding an animal
-        }
-
-        private void OnEditAnimal(object sender, RoutedEventArgs e)
-        {
-            // Logic for editing an animal
-        }
 
         private void OnExitApplication(object sender, RoutedEventArgs e)
         {
             Close();
         }
     }
-
 }

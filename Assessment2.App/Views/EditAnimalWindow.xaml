@@ -1,0 +1,52 @@
+﻿<Window x:Class="Assignment2.App.Views.EditAnimalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Animal" Height="350" Width="450">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Name -->
+        <TextBlock Text="Name:" Grid.Row="0" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Row="0" Margin="120,5,0,0" Width="250" />
+
+        <!-- Type -->
+        <TextBlock Text="Type:" Grid.Row="1" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{Binding AnimalTypes}" 
+                  SelectedValue="{Binding Type}" 
+                  Grid.Row="1" Margin="120,5,0,0" Width="250" />
+
+        <!-- Breed -->
+        <TextBlock Text="Breed:" Grid.Row="2" VerticalAlignment="Center" />
+        <TextBox Text="{Binding Breed, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Row="2" Margin="120,5,0,0" Width="250" />
+
+        <!-- Sex -->
+        <TextBlock Text="Sex:" Grid.Row="3" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{Binding AnimalSexes}" 
+                  SelectedValue="{Binding Sex}" 
+                  Grid.Row="3" Margin="120,5,0,0" Width="250" />
+
+        <!-- Owner -->
+        <TextBlock Text="Owner:" Grid.Row="4" VerticalAlignment="Center" />
+        <ComboBox ItemsSource="{Binding Customers}" 
+                  DisplayMemberPath="FullName"
+                  SelectedValuePath="Id"
+                  SelectedValue="{Binding OwnerId}" 
+                  Grid.Row="4" Margin="120,5,0,0" Width="250" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="10,0,5,0" Width="80" />
+            <Button Content="Save" Command="{Binding SaveCommand}" Width="80" />
+        </StackPanel>
+    </Grid>
+</Window>
