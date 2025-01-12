@@ -56,9 +56,9 @@ namespace Assignment2.App.BusinessLayer
             {
                 animals.Remove(existing);
                 SaveAll();
-                Debug.WriteLine($"Deleted animal with ID: {animalId}");
             }
         }
+
 
         private void LoadAll()
         {

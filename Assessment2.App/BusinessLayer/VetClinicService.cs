@@ -39,15 +39,14 @@ namespace Assignment2.App.BusinessLayer
         {
             var results = ownerId == 0 ? animalRepo.GetAll() : animalRepo.FindByOwner(ownerId);
             Console.WriteLine($"GetAnimalsByOwner: OwnerId={ownerId}, Count={results.Count()}");
-
-            foreach (var animal in results)
-            {
-                Console.WriteLine($"Animal Found: {animal.Name}, Type={animal.Type}, OwnerId={animal.OwnerId}");
-            }
-
             return results;
         }
 
+        // Add this method to fetch all animals
+        public IEnumerable<Animal> GetAllAnimals()
+        {
+            return animalRepo.GetAll();
+        }
 
         // CUSTOMER METHODS
         public Customer CreateCustomer(Customer customer)

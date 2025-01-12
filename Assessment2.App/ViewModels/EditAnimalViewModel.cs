@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Input;
 using Assignment2.App.BusinessLayer;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -32,9 +33,11 @@ namespace Assignment2.App.ViewModels
             // Commands
             SaveCommand = new RelayCommand(SaveAnimal, CanSave);
             CancelCommand = new RelayCommand(Cancel);
+            DeleteCommand = new RelayCommand(DeleteAnimal);
         }
 
-        public event Action? RequestClose;
+        // Event to notify the window to close
+        public event Action<bool>? RequestClose; // true = refresh search window, false = just close
 
         // Properties
         private string? name;
@@ -78,6 +81,7 @@ namespace Assignment2.App.ViewModels
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         private bool CanSave() =>
             !string.IsNullOrWhiteSpace(Name) &&
@@ -95,12 +99,31 @@ namespace Assignment2.App.ViewModels
 
             vetClinicService.UpdateAnimal(currentAnimal);
 
-            RequestClose?.Invoke(); // Notify the window to close
+            RequestClose?.Invoke(false); // Close without reopening the search window
+        }
+
+        private void DeleteAnimal()
+        {
+            // Prompt confirmation
+            var result = MessageBox.Show(
+                "Are you sure you want to delete this animal?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // Perform delete
+                vetClinicService.DeleteAnimal(currentAnimal.Id);
+
+                // Notify the main window to refresh the search window
+                RequestClose?.Invoke(true); // true = refresh and return to search
+            }
         }
 
         private void Cancel()
         {
-            RequestClose?.Invoke(); // Notify the window to close
+            RequestClose?.Invoke(false); // Notify to just close without reopening the search window
         }
     }
 }

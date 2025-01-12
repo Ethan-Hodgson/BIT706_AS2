@@ -55,6 +55,20 @@ namespace Assignment2.App.ViewModels
             Debug.WriteLine($"Total animals loaded into ObservableCollection: {Animals.Count}");
         }
 
+        // Load all animals
+        public void LoadAnimals()
+        {
+            Animals.Clear(); // Clear existing items
+            var animals = vetClinicService.GetAllAnimals(); // Fetch all animals
+            foreach (var animal in animals)
+            {
+                Animals.Add(animal); // Add them to the observable collection
+                Debug.WriteLine($"Loaded Animal: {animal.Name}, OwnerId={animal.OwnerId}");
+            }
+            Debug.WriteLine($"Total animals loaded: {Animals.Count}");
+        }
+
+
         private void Select()
         {
             RequestClose?.Invoke();

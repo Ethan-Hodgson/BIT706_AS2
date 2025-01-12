@@ -65,6 +65,7 @@ namespace Assignment2.App
 
         private void OnEditAnimal(object sender, RoutedEventArgs e)
         {
+            // Create a fresh instance of the search window and view model
             var animalSearchVm = new SearchForAnimalViewModel(clinicService);
             var animalSearchWindow = new SearchForAnimalWindow(animalSearchVm)
             {
@@ -72,25 +73,55 @@ namespace Assignment2.App
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            // Assuming OwnerId is provided dynamically; replace 0 with the actual ownerId
-            animalSearchWindow.LoadAnimals(0);
+            // Load animals initially
+            animalSearchVm.LoadAnimals();
 
+            // Display the search window
             if (animalSearchWindow.ShowDialog() == true)
             {
                 var selectedAnimal = animalSearchVm.SelectedAnimal;
                 if (selectedAnimal != null)
                 {
-                    Console.WriteLine($"Editing Animal: {selectedAnimal.Name}");
+                    // Create a fresh instance of the edit window and view model
                     var editAnimalVm = new EditAnimalViewModel(clinicService, selectedAnimal);
+
+                    // Handle RequestClose from the edit window
+                    editAnimalVm.RequestClose += shouldRefresh =>
+                    {
+                        // Close the edit window and handle refresh if needed
+                        if (shouldRefresh)
+                        {
+                            // Recreate and display a new search window
+                            var newSearchVm = new SearchForAnimalViewModel(clinicService);
+                            var newSearchWindow = new SearchForAnimalWindow(newSearchVm)
+                            {
+                                Owner = this,
+                                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                            };
+
+                            newSearchVm.LoadAnimals(); // Refresh animals list
+                            newSearchWindow.ShowDialog();
+                        }
+                    };
+
+                    // Display the edit window
                     var editAnimalWindow = new EditAnimalWindow(editAnimalVm)
                     {
                         Owner = this,
                         WindowStartupLocation = WindowStartupLocation.CenterOwner
                     };
+
                     editAnimalWindow.ShowDialog();
                 }
             }
         }
+
+
+
+
+
+
+
 
 
 

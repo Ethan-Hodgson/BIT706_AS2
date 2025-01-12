@@ -13,9 +13,9 @@ namespace Assignment2.App.Views
             viewModel.RequestClose += OnRequestClose;
         }
 
-        private void OnRequestClose()
+        private void OnRequestClose(bool navigateToSearch)
         {
-            DialogResult = true; // Notify the main window
+            DialogResult = navigateToSearch; // Return true if navigating to the search window
             Close();
         }
     }
